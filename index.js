@@ -8,30 +8,31 @@ app.get("/api/track", async (req, res) => {
   if (!code) return res.json({ error: "Thiếu mã đơn hàng" });
 
   try {
-    const response = await fetch("https://t.17track.net/restapi/track", {
+    const response = await fetch("https://api.17track.net/track/v2/batch", {
       method: "POST",
       headers: {
         "Content-Type": "application/json;charset=UTF-8",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Origin": "https://t.17track.net",
-        "Referer": "https://t.17track.net/"
+        "User-Agent": "17TRACK/3.0.22 (com.17Track.app; build:22; iOS 17.0)",
+        "Accept": "application/json"
       },
       body: JSON.stringify({
-        data: [{ num: code }]
+        data: [
+          {
+            num: code
+          }
+        ]
       })
     });
 
     const data = await response.json();
 
-    // Truy xuất phần mô tả trạng thái
-    const status =
-      data?.dat?.[0]?.track?.z0?.c?.replace(/\s+/g, " ")?.trim() ||
-      "Không tìm thấy trạng thái";
+    const desc =
+      data?.data?.[0]?.track?.z0?.c?.trim() || "Không tìm thấy trạng thái";
 
-    res.json({ code, status });
+    res.json({ code, status: desc });
   } catch (err) {
     res.json({ error: err.message });
   }
 });
 
-app.listen(3000, () => console.log("17Track Proxy running!"));
+app.listen(3000, () => console.log("17Track Mobile Proxy running!"));
