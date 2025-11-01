@@ -8,29 +8,30 @@ app.get("/api/track", async (req, res) => {
   if (!code) return res.json({ error: "Thiếu mã đơn hàng" });
 
   try {
-    const response = await fetch("https://online-gateway.ghn.vn/shiip/public-api/v2/tracking/search", {
+    const response = await fetch("https://t.17track.net/restapi/track", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Token": "5a51f998e1b14f16a6fbbd1d2e15f188"
+        "Content-Type": "application/json;charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "Origin": "https://t.17track.net",
+        "Referer": "https://t.17track.net/"
       },
-      body: JSON.stringify({ order_code: code })
+      body: JSON.stringify({
+        data: [{ num: code }]
+      })
     });
 
     const data = await response.json();
 
-    if (data.code !== 200 || !data.data || data.data.length === 0) {
-      return res.json({ code, status: "Không tìm thấy trạng thái" });
-    }
+    // Truy xuất phần mô tả trạng thái
+    const status =
+      data?.dat?.[0]?.track?.z0?.c?.replace(/\s+/g, " ")?.trim() ||
+      "Không tìm thấy trạng thái";
 
-    const latest = data.data[0]; // lấy bản ghi mới nhất
-    const status = latest.status || "Không xác định";
-    const description = latest.description || status;
-
-    res.json({ code, status: description });
+    res.json({ code, status });
   } catch (err) {
     res.json({ error: err.message });
   }
 });
 
-app.listen(3000, () => console.log("GHN Proxy running!"));
+app.listen(3000, () => console.log("17Track Proxy running!"));
