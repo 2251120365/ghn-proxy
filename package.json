@@ -1,10 +1,10 @@
 {
-    "name": "ghn-proxy",
-    "version": "1.0.0",
-    "type": "module",
-    "dependencies": {
-      "puppeteer": "^22.0.0",
-      "express": "^4.19.0"
-    }
+  "name": "ghn-proxy",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.0",
+    "cheerio": "^1.0.0",
+    "node-fetch": "^3.3.2"
   }
-  
+}
