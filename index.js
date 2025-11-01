@@ -8,7 +8,7 @@ app.get("/api/track", async (req, res) => {
   if (!code) return res.json({ error: "Thiếu mã đơn hàng" });
 
   try {
-    const response = await fetch("https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail", {
+    const response = await fetch("https://online-gateway.ghn.vn/shiip/public-api/v2/tracking/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,14 +19,15 @@ app.get("/api/track", async (req, res) => {
 
     const data = await response.json();
 
-    if (data.code !== 200 || !data.data) {
+    if (data.code !== 200 || !data.data || data.data.length === 0) {
       return res.json({ code, status: "Không tìm thấy trạng thái" });
     }
 
-    const status = data.data.status || "Không xác định";
-    const status_text = data.data.status_text || status;
+    const latest = data.data[0]; // lấy bản ghi mới nhất
+    const status = latest.status || "Không xác định";
+    const description = latest.description || status;
 
-    res.json({ code, status: status_text });
+    res.json({ code, status: description });
   } catch (err) {
     res.json({ error: err.message });
   }
